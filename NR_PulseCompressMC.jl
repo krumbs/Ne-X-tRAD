@@ -12,8 +12,7 @@ export readRefSig
 
 #---------------------------------------------------------------------------------------------------------------------------------
 ## Altered distribute "DistributedArrays.jl" distribute() function to distribute the raw data matrix into specified distribution
-function mydistribute(A::AbstractArray, mydist::AbstractArray;
-                    myprocs=workers()[1:min(nworkers(), maximum(size(A)))])
+function mydistribute(A::AbstractArray, mydist::AbstractArray; myprocs=workers()[1:min(nworkers(), maximum(size(A)))])
     owner = myid()
     rr = RemoteRef()
     put!(rr, A)
