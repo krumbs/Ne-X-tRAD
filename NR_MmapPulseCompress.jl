@@ -18,9 +18,9 @@ end
 #-----------------------------------------------------------------------------------------
 using DSP
 
-function readRefSig(file_name_)
+function readRefSig(fileName_)
 local refSigRaw_
-refSigRaw_  	= readcsv(file_name_, Float32);	
+refSigRaw_  	= readcsv(fileName_, Float32);	
 
 ## Process resig
 refSigRaw_ 	= refSigRaw_/sqrt(mean(abs(refSigRaw_).^2));
@@ -40,22 +40,17 @@ refSig = readRefSig("/home/stephanie/Desktop/refSigN3N3Pl5000.txt");
 function SCPC(nPulses_, radarData_, refSig_)
 local w
 local P
-local specData = zeros(2048*nPulses_,1)*im;
-
-# Transform to frequency domain and convolve
-P = plan_fft(radarData_[1:2048]);
-for w = 1:2048:2048*nPulses_
-	specData[w:w+2047] = refSig_[1:2048].*(P*radarData_[w:w+2047]);
-end
+local specData = zeros(Complex128, 2048,1);
 
 # Create a file for Mmapping
-outFile = open("/home/stephanie/Desktop/02-03/SCPC.bin", "w+");
-write(outFile, nPulses_);
+outFile = open("/home/stephanie/Desktop/02-04/SCPC.bin", "w+");
+#write(outFile, nPulses_);
+PlanRtoC = plan_fft(radarData_[1:2048]);
+PlanCtoC = plan_ifft(specData[1:2048]);
 
-# Transform back to time domain and write to file
-Plan = plan_ifft(specData[1:2048]);
 for w = 1:2048:2048*nPulses_
-	write(outFile, P*specData[w:w+2047]);
+# Transform to frequency domain and convolve then transform back to time domain and write to file
+	write(outFile, PlanCtoC*(refSig_[1:2048].*(PlanRtoC*radarData_[w:w+2047])));
 end
 close(outFile);
 end
