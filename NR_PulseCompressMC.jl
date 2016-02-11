@@ -103,7 +103,7 @@ myfile = open("NR_PCdata.bin", "w+");
 
 # Setting the dimensions of the Array in binary file
 write(myfile, size(DdataRefs,1)::Int64);
-write(myfile, size(DdataRefsT,2)::Int64);
+write(myfile, size(DdataRefs,2)::Int64);
 write(myfile, DdataRefs);
 close(myfile);
 end
