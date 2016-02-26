@@ -55,6 +55,7 @@ end
 
 #---------------------------------------------------------------------------------------------------------------------------------	
 ## Parallel Pulse Compression function
+
 function MCPC(nPulses_::Int, rawDataFile_::AbstractString, refSigFile_::AbstractString, analytic_::Bool)
 	# Array and Variable Initializations
 	local PCchunk;
@@ -70,7 +71,8 @@ function MCPC(nPulses_::Int, rawDataFile_::AbstractString, refSigFile_::Abstract
 	Ddata = zeros(nPulses_,2048);
 
 	# Read the data from the bin file
-	dataRaw = readRawData(nPulses_,rawDataFile_);	
+	dataRaw = readRawData(nPulses_,rawDataFile_);
+	
 	# Read the chirp from the txt file
 	refSig = readRefSig(refSigFile_);
 
@@ -92,34 +94,25 @@ function MCPC(nPulses_::Int, rawDataFile_::AbstractString, refSigFile_::Abstract
 	refs = 0;
 	gc()
 
-#=
-	# Move the array of processed chunks back into local memory
-	DdataArray = convert(Array, DdataArray);
-	DdataRefs = DdataArray[1];
+	## Create a file for Memory Mapping
 
-	#function NR_RTIplot()
-	# reconstruct the array from list of arrays
+	myFile = open("NR_PCdata.bin", "w+");
 
-	for w = 2:P
-		DdataOut = vcat(DdataRefs, DdataArray[w]);
-		DdataRefs = DdataOut;
+	for w = 1:P
+		write(myFile, DdataArray[w][1]);
+
 	end
 	DdataArray = 0;
 	DdataOut = 0;
 	gc()
-=#
-#=
-	## Create a file for Memory Mapping
-	myfile = open("NR_PCdata.bin", "w+");
+	close(myFile);
 
-	# Setting the dimensions of the Array in binary file
-	write(myfile, DdataRefs);
-	close(myfile);
-=#
+#=
 	return DdataArray
+=#
 end
 ## Run the Pulse Compression function
-DmatchedData = MCPC(10000, "/home/stephanie/Desktop/e10_10_21_1927_55_P1_1_130000_S0_1_2047_node3.bin", "/home/stephanie/Desktop/refSigN3N3Pl5000.txt", true)
+data = MCPC(2048*35, "/home/stephanie/Desktop/e10_10_21_1927_55_P1_1_130000_S0_1_2047_node3.bin", "/home/stephanie/Desktop/refSigN3N3Pl5000.txt", true)
 
 
 
