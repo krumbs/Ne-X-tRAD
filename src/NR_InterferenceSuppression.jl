@@ -38,14 +38,17 @@ for k = 1:1024
 		Z[j,k] = er;
 	end
 end	
+using PyPlot
+imgB = imshow(log10(abs(Data_matched)), aspect = "auto");
 
 # Import matplotlib.pyplot
 using PyCall
 @pyimport maplotlib.pyplot as plt
-
+#=
 println("Printing contaminated_data.png to disk...")
 # Save an image of the contaminated data
 plt[:savefig]("contaminated_data.png")
-println("Printing interference_suppressed_data.pngor a Python file-like to disk...")
+=#
+println("Printing interference_suppressed_data.png to disk...")
 # Save an image of the interference suppressed data
 plt[:savefig]("interference_suppressed_data.png")
