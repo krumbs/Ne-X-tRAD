@@ -32,10 +32,26 @@ function NR_DopplerFilter(np_::Int64, ds_::Int64, inputData_::AbstractString, in
 	end
 return s
 end
-tic()
 
-output = NR_DopplerFilter(256*500, 256,"/home/jnkste003/thesis_code/Ne-X-tRAD/data/e10_10_21_1927_55_P1_1_130000_S0_1_2047_node3.bin", "/home/jnkste003/thesis_code/Ne-X-tRAD/data/refSigN3N3Pl5000.txt")
-toc()
+#----------------------------------------------------------------------------------------------------
+# For Skippy:
+# parameter 1 of NR_DopplerFilter() is the number of range lines (pulses) you consider. It's best if you choose the number of range lines to be a multiple of the DFT size.
+# parameter 2 of NR_DopplerFilter() is the DFT size. Best to choose from the following (128, 256, 512)
+# it might take a while to save to file
+#-----------------------------------------------------------------------------------------------------
+
+output = NR_DopplerFilter(256*200, 256,"/home/jnkste003/thesis_code/Ne-X-tRAD/data/e10_10_21_1927_55_P1_1_130000_S0_1_2047_node3.bin", "/home/jnkste003/thesis_code/Ne-X-tRAD/data/refSigN3N3Pl5000.txt")
+
+## Create and save to binary file
+myfile = open("DopplerProcessedData.bin", "w+");
+
+# Setting the dimensions of the Array in binary file
+write(myfile, size(output,1)::Int64);
+write(myfile, size(output,2)::Int64);
+
+write(myfile, output);
+close(myfile);
+
 ## Plot one cut
 #image = imshow(log10(abs(s[:,1:1+255])), aspect = "auto");
 #using PyCall
